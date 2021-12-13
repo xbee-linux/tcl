@@ -1,0 +1,36 @@
+schema-version: 1.0
+
+type: builder
+
+description: |
+  Le paquet Tcl contient le langage de commande des outils, un langage de script robuste. Le paquet Expect est écrit en Tcl.
+  Programmes installés: tclsh (lien vers tclsh8.6) et tclsh8.6
+  Bibliothèque installée: libtcl8.6.so et libtclstub8.6.a
+  
+const:
+  srcDir: /usr/src
+  exportDir: /opt/tcl
+
+
+var:
+  version: 8.6.11
+
+provision:
+  - shell: "{{ .templates }}/download.sh"
+
+build:
+  - shell:
+      cmds:
+        - ./configure --prefix={% exportDir %} --mandir={% exportDir %}/share/man $([ "$(uname -m)" = x86_64 ] && echo --enable-64bit)
+        - make
+        - sed -e "s|{% srcDir %}/tcl{% version %}/unix|{% exportDir %}/lib|" -e "s|{% srcDir %}/tcl{% version %}|{% exportDir %}/include|"  -i tclConfig.sh
+        - sed -e "s|{% srcDir %}/tcl{% version %}/unix/pkgs/tdbc1.1.2|/opt/tcl/lib/tdbc1.1.2|" -e "s|{% srcDir %}/tcl{% version %}/pkgs/tdbc1.1.2/generic|/opt/tcl/include|" -e "s|{% srcDir %}/tcl{% version %}/pkgs/tdbc1.1.2/library|/opt/tcl/lib/tcl8.6|" -e "s|{% srcDir %}/tcl{% version %}/pkgs/tdbc1.1.2|/opt/tcl/include|" -i pkgs/tdbc1.1.2/tdbcConfig.sh
+        - sed -e "s|{% srcDir %}/tcl{% version %}/unix/pkgs/itcl4.2.1|/opt/tcl/lib/itcl4.2.1|" -e "s|{% srcDir %}/tcl{% version %}/pkgs/itcl4.2.1/generic|/opt/tcl/include|" -e "s|{% srcDir %}/tcl{% version %}/pkgs/itcl4.2.1|/opt/tcl/include|" -i pkgs/itcl4.2.1/itclConfig.sh
+#        - make test
+        - make install
+        - chmod -v u+w {% exportDir %}/lib/libtcl8.6.so
+        - make install-private-headers
+        - ln -sfv tclsh8.6 {% exportDir %}/bin/tclsh
+        - mv {% exportDir %}/share/man/man3/{Thread,Tcl_Thread}.3
+      directory: "{% srcDir %}/tcl{% version %}/unix"
+  - export: "{% exportDir %}"

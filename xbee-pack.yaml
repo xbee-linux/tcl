@@ -1,0 +1,28 @@
+schema-version: 1.0
+
+description: |
+  Le paquet Tcl contient le langage de commande des outils, un langage de script robuste. Le paquet Expect est écrit en Tcl.
+
+  Programmes installés: tclsh (lien vers tclsh8.6) et tclsh8.6
+  Bibliothèque installée: libtcl8.6.so et libtclstub8.6.a
+
+  tclsh8.6: Le shell de commande de Tcl
+  tclsh: Un lien vers tclsh8.6
+  libtcl8.6.so: La bibliothèque Tcl
+  libtclstub8.6.a: La bibliothèque de base de Tcl
+
+
+builder:
+  origin: ./tcl-builder
+  var:
+    version: "{% version %}"
+
+
+var:
+  version: 8.6.11
+
+
+provision:
+  - copy:
+      builder: tcl
+      todir: /usr
