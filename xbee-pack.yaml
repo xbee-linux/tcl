@@ -12,11 +12,7 @@ description: |
   libtclstub8.6.a: La bibliothèque de base de Tcl
 
 
-builder:
-  origin: ./tcl-builder
-  var:
-    version: "{% version %}"
-
+builder: ./tcl-builder
 
 var:
   version: 8.6.11
@@ -25,4 +21,4 @@ var:
 provision:
   - copy:
       builder: tcl
-      todir: /usr
+      todir: /
