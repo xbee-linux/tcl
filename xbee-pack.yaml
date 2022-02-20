@@ -1,5 +1,7 @@
 schema-version: 1.0
 
+type: builder
+
 description: |
   Le paquet Tcl contient le langage de commande des outils, un langage de script robuste. Le paquet Expect est écrit en Tcl.
 
@@ -12,13 +14,35 @@ description: |
   libtclstub8.6.a: La bibliothèque de base de Tcl
 
 
-builder: ./tcl-builder
-
-var:
+in:
   version: 8.6.11
 
 
 provision:
-  - copy:
-      builder: tcl
-      todir: /
+  - url:
+      from: https://downloads.sourceforge.net/tcl/tcl{% version %}-src.tar.gz
+      todir: "{% xbeeSrc %}"
+      wget: true
+  - url:
+      from: https://downloads.sourceforge.net/tcl/tcl{% version %}-html.tar.gz
+      todir: "{% xbeeSrc %}"
+      wget: true
+
+build:
+  - shell:
+      cmds:
+        - ./configure --prefix=/usr --mandir=/usr/share/man $([ "$(uname -m)" = x86_64 ] && echo --enable-64bit)
+        - make
+        - sed -e "s|{% xbeeSrc %}/tcl{% version %}/unix|/usr/lib|" -e "s|{% xbeeSrc %}/tcl{% version %}|/usr/include|"  -i tclConfig.sh
+        - sed -e "s|{% xbeeSrc %}/tcl{% version %}/unix/pkgs/tdbc1.1.2|/opt/tcl/lib/tdbc1.1.2|" -e "s|{% xbeeSrc %}/tcl{% version %}/pkgs/tdbc1.1.2/generic|/opt/tcl/include|" -e "s|{% xbeeSrc %}/tcl{% version %}/pkgs/tdbc1.1.2/library|/opt/tcl/lib/tcl8.6|" -e "s|{% xbeeSrc %}/tcl{% version %}/pkgs/tdbc1.1.2|/opt/tcl/include|" -i pkgs/tdbc1.1.2/tdbcConfig.sh
+        - sed -e "s|{% xbeeSrc %}/tcl{% version %}/unix/pkgs/itcl4.2.1|/opt/tcl/lib/itcl4.2.1|" -e "s|{% xbeeSrc %}/tcl{% version %}/pkgs/itcl4.2.1/generic|/opt/tcl/include|" -e "s|{% xbeeSrc %}/tcl{% version %}/pkgs/itcl4.2.1|/opt/tcl/include|" -i pkgs/itcl4.2.1/itclConfig.sh
+#        - make test
+        - make install DESTDIR={% xbeeOut %}
+        - chmod -v u+w {% xbeeOut %}/usr/lib/libtcl8.6.so
+        - make install-private-headers DESTDIR={% xbeeOut %}
+        - ln -sfv tclsh8.6 {% xbeeOut %}/usr/bin/tclsh
+        - mv {% xbeeOut %}/usr/share/man/man3/{Thread,Tcl_Thread}.3
+      directory: "{% xbeeSrc %}/tcl{% version %}/unix"
+
+
+#tar xf "${artefactPath}" -C /usr/src/tcl{{ .pack.version }} --strip-components=1
