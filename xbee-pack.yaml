@@ -21,11 +21,9 @@ var:
 provision:
   - url:
       from: https://downloads.sourceforge.net/tcl/tcl{{ .version }}-src.tar.gz
-      todir: "{{ .xbee.src }}"
       wget: true
   - url:
       from: https://downloads.sourceforge.net/tcl/tcl{{ .version }}-html.tar.gz
-      todir: "{{ .xbee.src }}"
       wget: true
 
 build:
