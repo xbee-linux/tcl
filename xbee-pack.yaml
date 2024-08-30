@@ -15,7 +15,8 @@ description: |
 
 
 var:
-  version: 8.6.11
+  xbee:
+    version: 8.6.11
 
 
 provision:
