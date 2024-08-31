@@ -21,10 +21,10 @@ var:
 
 provision:
   - url:
-      from: https://downloads.sourceforge.net/tcl/tcl{{ .version }}-src.tar.gz
+      from: https://downloads.sourceforge.net/tcl/tcl{{ .xbee.version }}-src.tar.gz
       wget: true
   - url:
-      from: https://downloads.sourceforge.net/tcl/tcl{{ .version }}-html.tar.gz
+      from: https://downloads.sourceforge.net/tcl/tcl{{ .xbee.version }}-html.tar.gz
       wget: true
 
 build:
@@ -32,16 +32,16 @@ build:
       cmds:
         - ./configure --prefix=/usr --mandir=/usr/share/man $([ "$(uname -m)" = x86_64 ] && echo --enable-64bit)
         - make
-        - sed -e "s|{{ .xbee.src }}/tcl{{ .version }}/unix|/usr/lib|" -e "s|{{ .xbee.src }}/tcl{{ .version }}|/usr/include|"  -i tclConfig.sh
-        - sed -e "s|{{ .xbee.src }}/tcl{{ .version }}/unix/pkgs/tdbc1.1.2|/opt/tcl/lib/tdbc1.1.2|" -e "s|{{ .xbee.src }}/tcl{{ .version }}/pkgs/tdbc1.1.2/generic|/opt/tcl/include|" -e "s|{{ .xbee.src }}/tcl{{ .version }}/pkgs/tdbc1.1.2/library|/opt/tcl/lib/tcl8.6|" -e "s|{{ .xbee.src }}/tcl{{ .version }}/pkgs/tdbc1.1.2|/opt/tcl/include|" -i pkgs/tdbc1.1.2/tdbcConfig.sh
-        - sed -e "s|{{ .xbee.src }}/tcl{{ .version }}/unix/pkgs/itcl4.2.1|/opt/tcl/lib/itcl4.2.1|" -e "s|{{ .xbee.src }}/tcl{{ .version }}/pkgs/itcl4.2.1/generic|/opt/tcl/include|" -e "s|{{ .xbee.src }}/tcl{{ .version }}/pkgs/itcl4.2.1|/opt/tcl/include|" -i pkgs/itcl4.2.1/itclConfig.sh
+        - sed -e "s|{{ .xbee.src }}/tcl{{ .xbee.version }}/unix|/usr/lib|" -e "s|{{ .xbee.src }}/tcl{{ .xbee.version }}|/usr/include|"  -i tclConfig.sh
+        - sed -e "s|{{ .xbee.src }}/tcl{{ .xbee.version }}/unix/pkgs/tdbc1.1.2|/opt/tcl/lib/tdbc1.1.2|" -e "s|{{ .xbee.src }}/tcl{{ .xbee.version }}/pkgs/tdbc1.1.2/generic|/opt/tcl/include|" -e "s|{{ .xbee.src }}/tcl{{ .xbee.version }}/pkgs/tdbc1.1.2/library|/opt/tcl/lib/tcl8.6|" -e "s|{{ .xbee.src }}/tcl{{ .xbee.version }}/pkgs/tdbc1.1.2|/opt/tcl/include|" -i pkgs/tdbc1.1.2/tdbcConfig.sh
+        - sed -e "s|{{ .xbee.src }}/tcl{{ .xbee.version }}/unix/pkgs/itcl4.2.1|/opt/tcl/lib/itcl4.2.1|" -e "s|{{ .xbee.src }}/tcl{{ .xbee.version }}/pkgs/itcl4.2.1/generic|/opt/tcl/include|" -e "s|{{ .xbee.src }}/tcl{{ .xbee.version }}/pkgs/itcl4.2.1|/opt/tcl/include|" -i pkgs/itcl4.2.1/itclConfig.sh
 #        - make test
         - make install DESTDIR={{ .xbee.out }}
         - chmod -v u+w {{ .xbee.out }}/usr/lib/libtcl8.6.so
         - make install-private-headers DESTDIR={{ .xbee.out }}
         - ln -sfv tclsh8.6 {{ .xbee.out }}/usr/bin/tclsh
         - mv {{ .xbee.out }}/usr/share/man/man3/{Thread,Tcl_Thread}.3
-      directory: "{{ .xbee.src }}/tcl{{ .version }}/unix"
+      directory: "{{ .xbee.src }}/tcl{{ .xbee.version }}/unix"
 
 
-#tar xf "${artefactPath}" -C /usr/src/tcl{{ .version }} --strip-components=1
+#tar xf "${artefactPath}" -C /usr/src/tcl{{ .xbee.version }} --strip-components=1
