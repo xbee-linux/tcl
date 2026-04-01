@@ -27,7 +27,7 @@ provision:
 
 build:
   - shell:
-      cmds:
+      cmd:
         - ./configure --prefix=/usr --mandir=/usr/share/man $([ "$(uname -m)" = x86_64 ] && echo --enable-64bit)
         - make
         - sed -e "s|{{ .xbee.src }}/tcl{{ .xbee.version }}/unix|/usr/lib|" -e "s|{{ .xbee.src }}/tcl{{ .xbee.version }}|/usr/include|"  -i tclConfig.sh
